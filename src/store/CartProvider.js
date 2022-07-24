@@ -1,12 +1,12 @@
-import React, { useReducer } from "react";
-import CartContext from "./CartContext";
+import React, { useReducer } from 'react';
+import CartContext from './CartContext';
 
 const initialState = {
   items: [],
   totalAmount: 0,
 };
 const cartReducer = (state, action) => {
-  if (action.type === "ADD") {
+  if (action.type === 'ADD') {
     const updatedTotalAmount =
       state.totalAmount + action.item.amount * action.item.price;
     const existingCartItemIndex = state.items.findIndex(
@@ -19,7 +19,7 @@ const cartReducer = (state, action) => {
         ...existingCartItem,
         amount: existingCartItem.amount + action.item.amount,
       };
-      console.log("Total Amount: ", existingCartItem, action.item);
+      console.log('Total Amount: ', existingCartItem, action.item);
       updatedItems = [...state.items];
       updatedItems[existingCartItemIndex] = updatedItem;
     } else {
@@ -31,7 +31,7 @@ const cartReducer = (state, action) => {
       totalAmount: updatedTotalAmount,
     };
   }
-  if (action.type === "REMOVE") {
+  if (action.type === 'REMOVE') {
     const existingCartItemIndex = state.items.findIndex(
       (item) => item.id === action.id,
     );
@@ -50,6 +50,10 @@ const cartReducer = (state, action) => {
       totalAmount: updatedTotalAmount,
     };
   }
+  if (action.type === 'CLEAR') {
+    return initialState;
+  }
+
   return initialState;
 };
 
@@ -57,11 +61,15 @@ const CartProvider = (props) => {
   const [cartState, dispatchCart] = useReducer(cartReducer, initialState);
 
   const handleAddItem = (item) => {
-    dispatchCart({ type: "ADD", item: item });
+    dispatchCart({ type: 'ADD', item: item });
   };
 
   const handleRemoveItem = (id) => {
-    dispatchCart({ type: "REMOVE", id: id });
+    dispatchCart({ type: 'REMOVE', id: id });
+  };
+
+  const handleClearItem = () => {
+    dispatchCart({ type: 'CLEAR' });
   };
 
   const cartProvider = {
@@ -69,6 +77,7 @@ const CartProvider = (props) => {
     totalAmount: cartState.totalAmount,
     addItem: handleAddItem,
     removeItem: handleRemoveItem,
+    clearItem: handleClearItem,
   };
   return (
     <CartContext.Provider value={cartProvider}>
