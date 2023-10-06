@@ -7,11 +7,13 @@ const isFiveChars = (value) => value.trim().length === 5;
 const Checkout = (props) => {
   const [validInput, setValidInput] = useState({
     name: true,
+    phone: true,
     street: true,
     city: true,
     postal: true,
   });
   const nameRef = useRef();
+  const phoneRef = useRef();
   const streetRef = useRef();
   const postalRef = useRef();
   const cityRef = useRef();
@@ -19,28 +21,32 @@ const Checkout = (props) => {
   const confirmHandler = (event) => {
     event.preventDefault();
     const enterName = nameRef.current.value;
+    const enterPhone = phoneRef.current.value;
     const enterStreet = streetRef.current.value;
     const enterPostal = postalRef.current.value;
     const enterCity = cityRef.current.value;
 
     const validName = !isEmpty(enterName);
+    const validPhone = !isEmpty(enterPhone);
     const validStreet = !isEmpty(enterStreet);
     const validCity = !isEmpty(enterCity);
     const validPostal = isFiveChars(enterPostal);
 
     setValidInput({
       name: validName,
+      phone: validPhone,
       street: validStreet,
       city: validCity,
       postal: validPostal,
     });
 
-    const validForm = validName && validStreet && validCity && validPostal;
+    const validForm = validName && validPhone && validStreet && validCity && validPostal;
     if (!validForm) {
       return;
     }
     props.onConfirm({
       name: enterName,
+      phone: enterPhone,
       street: enterStreet,
       city: enterCity,
       postal: enterPostal,
@@ -49,6 +55,9 @@ const Checkout = (props) => {
 
   const nameClass = `${classes.control} ${
     validInput.name ? '' : classes.invalid
+  }`;
+  const phoneClass = `${classes.control} ${
+    validInput.phone ? '' : classes.invalid
   }`;
   const streetClass = `${classes.control} ${
     validInput.street ? '' : classes.invalid
@@ -66,6 +75,11 @@ const Checkout = (props) => {
         <label htmlFor="name">Your Name</label>
         <input type="text" id="name" ref={nameRef} />
         {!validInput.name && <p>Please enter a valid name!</p>}
+      </div>
+      <div className={phoneClass}>
+        <label htmlFor="phone">Your Phone</label>
+        <input type="text" id="phone" ref={phoneRef} />
+        {!validInput.phone && <p>Please enter a valid Phone!</p>}
       </div>
       <div className={streetClass}>
         <label htmlFor="street">Street</label>
